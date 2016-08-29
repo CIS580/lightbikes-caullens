@@ -1,6 +1,10 @@
 var canvas = document.getElementById('screen');
 var ctx = canvas.getContext('2d');
 var speed = 1/16000
+var backCanvas = document.create('canvas');
+backCanvas.width = canvas.width;
+backCanvas.height = canvas.height;
+var backCtx = backCanvas.getContext('2d');
 
 var x = 0;
 var y = 0;
@@ -14,7 +18,6 @@ var input = {
 
 window.onkeydown = function(event)
 {
-	console.log(event.keyCode);
 	switch(event.keyCode)
 	{
 		//UP
@@ -32,7 +35,7 @@ window.onkeydown = function(event)
 		case 83:
 			input.down = true;
 			break;
-		//Right
+		//RIGHT
 		case 39:
 		case 68:
 			input.right = true;
@@ -43,7 +46,6 @@ window.onkeydown = function(event)
 
 window.onkeyup = function(event)
 {
-	console.log(event.keyCode);
 	switch(event.keyCode)
 	{
 		//UP
@@ -61,7 +63,7 @@ window.onkeyup = function(event)
 		case 83:
 			input.down = false;
 			break;
-		//Right
+		//RIGHT
 		case 39:
 		case 68:
 			input.right = false;
@@ -77,10 +79,19 @@ function loop()
 	if(input.left) x -= 1;
 	if(input.right) x += 1;
 	
-	ctx.fillStyle = "red";
-	ctx.fillRect(x, y, 5, 5);
+	backCtx.clearRect(0,0,canvas.width,canvas.height);
 	
-	setTimeout(loop, speed)
+	for(i = 0; i < 1000; i++) {
+		backCtx.fillStyle = "blue";
+		backCtx.fillRect((i*20)%100,(i*20)%100,10,10);
+	}
+	
+	backCtx.fillStyle = "red";
+	backCtx.fillRect(x, y, 5, 5);
+	//Swap buffers
+	ctx.drawImage(backCanvas,0,0);
+	
+	requestAnimationFrame(loop);
 }
-loop();
+requestAnimationFrame(loop);
 
